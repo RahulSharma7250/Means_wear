@@ -1,17 +1,15 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import { ShoppingBag, ShoppingCart, Menu, X } from 'lucide-react'
+import Link from "next/link"
+import { useState } from "react"
+import { ShoppingBag, Search, Menu, X } from "lucide-react"
+import { useCart } from "@/app/contexts/CartContext"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [cartCount, setCartCount] = useState(0)
+  const { cart } = useCart()
 
-  useEffect(() => {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-    setCartCount(cart.length)
-  }, [])
+  const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
     <header className="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md">
@@ -29,27 +27,30 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-gray-700 hover:text-teal-500 transition-colors">HOME</Link>
-            <Link href="/products" className="text-gray-700 hover:text-teal-500 transition-colors">PRODUCTS</Link>
-            <Link href="/about" className="text-gray-700 hover:text-teal-500 transition-colors">ABOUT</Link>
-            <Link href="/contact" className="text-gray-700 hover:text-teal-500 transition-colors">CONTACT</Link>
-
-            {/* Cart Icon with Count */}
-            <Link href="/cart" className="relative">
-              <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-teal-500 transition-colors" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                  {cartCount}
+            <Link href="/" className="text-gray-700 hover:text-teal-500 transition-colors">
+              HOME
+            </Link>
+            <Link href="/products" className="text-gray-700 hover:text-teal-500 transition-colors">
+              PRODUCTS
+            </Link>
+            <Link href="/about" className="text-gray-700 hover:text-teal-500 transition-colors">
+              ABOUT
+            </Link>
+            <Link href="/cart" className="text-gray-700 hover:text-teal-500 transition-colors relative">
+              CART
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-teal-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                  {cartItemsCount}
                 </span>
               )}
             </Link>
+            <button className="text-gray-700 hover:text-teal-500 transition-colors">
+              <Search className="w-5 h-5" />
+            </button>
           </nav>
 
           {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden text-gray-700"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
+          <button className="md:hidden text-gray-700" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -59,14 +60,22 @@ export default function Header() {
       {isMenuOpen && (
         <div className="md:hidden bg-white border-t">
           <nav className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-            <Link href="/" className="text-gray-700 hover:text-teal-500 transition-colors">HOME</Link>
-            <Link href="/products" className="text-gray-700 hover:text-teal-500 transition-colors">PRODUCTS</Link>
-            <Link href="/about" className="text-gray-700 hover:text-teal-500 transition-colors">ABOUT</Link>
-            <Link href="/contact" className="text-gray-700 hover:text-teal-500 transition-colors">CONTACT</Link>
-            <Link href="/cart" className="text-gray-700 hover:text-teal-500 transition-colors">CART ({cartCount})</Link>
+            <Link href="/" className="text-gray-700 hover:text-teal-500 transition-colors">
+              HOME
+            </Link>
+            <Link href="/products" className="text-gray-700 hover:text-teal-500 transition-colors">
+              PRODUCTS
+            </Link>
+            <Link href="/about" className="text-gray-700 hover:text-teal-500 transition-colors">
+              ABOUT
+            </Link>
+            <Link href="/cart" className="text-gray-700 hover:text-teal-500 transition-colors">
+              CART ({cartItemsCount})
+            </Link>
           </nav>
         </div>
       )}
     </header>
   )
 }
+
