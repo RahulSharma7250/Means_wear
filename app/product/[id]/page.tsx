@@ -30,8 +30,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   }
 
   const handleAddToCart = () => {
-    if (!selectedColor || !selectedSize) {
-      toast.error("Please select color and size")
+    if (product.colors && !selectedColor) {
+      toast.error("Please select a color")
+      return
+    }
+    if (product.sizes && !selectedSize) {
+      toast.error("Please select a size")
       return
     }
 
@@ -42,10 +46,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       price: product.price,
       quantity: 1,
       image: product.image,
-      color: selectedColor,
-      size: selectedSize,
-      customText,
-      customImage: uploadedImage,
+      color: selectedColor || undefined,
+      size: selectedSize || undefined,
+      customText: customText || undefined,
+      customImage: uploadedImage || undefined,
     })
     toast.success("Added to cart!")
     setTimeout(() => setIsAdding(false), 1000)
